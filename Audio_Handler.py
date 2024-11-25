@@ -1,0 +1,27 @@
+import os
+from os import path
+from pydub import AudioSegment
+
+class AudioHandler:
+    def __init__(self, file_path):
+        self.file_name = path.splitext(file_path)[0]
+        self.file_type = path.splitext(file_path)[1]
+        self.sound = self.to_wav(file_path)
+    @staticmethod
+    def to_wav(file_path):
+        file_type = path.splitext(file_path)[1]
+        accepted_file_types = {".wav", ".raw", ".mp3", ".m4a"}
+        if file_type in accepted_file_types:
+            return AudioSegment.from_file(file_path)
+    @staticmethod
+    def audio_file_holder_path():
+        # Returns the proper filepath for Audio_File_Holder directory
+        cwd = os.getcwd()
+        root = path.dirname(cwd)
+        return path.join(root, "Audio_File_Holder")
+    def export(self):
+        # Exports the audio into the Audio_File_Holder directory
+        return self.sound.export(self.audio_file_holder_path() + self.file_name + '.wav', format="wav")
+
+
+audio = AudioHandler(AudioHandler.audio_file_holder_path() + "\\" + "ProjectClap.m4a")
