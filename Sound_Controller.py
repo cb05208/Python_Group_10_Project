@@ -1,6 +1,7 @@
 from Sound_Displayer import Spid_Displayer as sDisplay
 from Sound_Model import Spid_Model as sModel
 import tkinter as ttk
+#IGNORE FOR NOW
 
 '''
 Purpose of the controller:

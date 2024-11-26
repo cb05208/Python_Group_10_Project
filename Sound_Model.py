@@ -1,4 +1,5 @@
 # Base model
+#IGNORE FOR NOW
 import numpy as np
 from scipy.signal import welch
 import matplotlib.pyplot as plt
@@ -15,4 +16,4 @@ class Spid_Model:
 
     #waveform function
 
-    #find target frequency
+    #find target frequencies
