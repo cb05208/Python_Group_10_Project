@@ -1,19 +1,44 @@
 # Base model
-#IGNORE FOR NOW
 import numpy as np
 from scipy.signal import welch
 import matplotlib.pyplot as plt
 from matplotlib.figure import Figure
 import os
 from pydub import AudioSegment
+from Audio_Handler import AudioHandler
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from scipy.io import wavfile
 
 class Spid_Model:
     #function for converting to .wav
-    def convert_m4a_to_wav(self, _file):
-        #should maybe be called even if .wav
-        audio = AudioSegment.from_file(_file, format = "m4a")
-        audio.export(audio, format = "wav") #turns audio into wav file
+    def __init__(self, displayer):
+        self.displayer = displayer
 
-    #waveform function
+    # changes 2-channel to 1-channel
+    def channel_set(self, file_path):
+        audio_handler = AudioHandler(file_path)
+        exported_file = audio_handler.export()
+        samplerate, data = wavfile.read(exported_file)
+        if len(data.shape) > 1:
+            data = data[:, 0]
+        return exported_file, samplerate, data
 
-    #find target frequencies
+    # waveform graph
+    def waveform(self, file_path):
+        exported_file, samplerate, data = self.channel_set(file_path)
+        length = data.shape[0] / samplerate
+        time = np.linspace(0, length, data.shape[0])
+
+        # plot on canvas
+        f = self.displayer.f
+        f.clear()
+        wfplot = f.add_subplot(111)
+        wfplot.plot(time, data)
+        wfplot.set_title("Waveform")
+        wfplot.set_xlabel("Time (s)")
+        wfplot.set_ylabel("Amplitude")
+
+        # refresh canvas
+        canvas = FigureCanvasTkAgg(f, self.displayer)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, pady=20, sticky="w", padx=25)

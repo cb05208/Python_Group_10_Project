@@ -5,6 +5,7 @@ import tkinter as ttk
 
 '''
 Purpose of the controller:
+- create model and view
 - 
 '''
 

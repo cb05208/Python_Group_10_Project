@@ -7,6 +7,7 @@ from matplotlib.figure import Figure
 from tkinter import filedialog
 import os
 import numpy as np
+from Audio_Handler import AudioHandler  #need to eventually make it so that the model and view are completely seperate
 
 class Spid_Displayer(tk.Tk):
     def __init__(self):
@@ -17,6 +18,8 @@ class Spid_Displayer(tk.Tk):
         self.config(pady=10)
         self.minsize(650, 700)  #cannot make window smaller than 650x700
 
+        self.audio_handler = None
+        self.spid_model = None
         self.create_buttons()
         
         self.mainloop()
@@ -42,13 +45,10 @@ class Spid_Displayer(tk.Tk):
         self._analyze_btn.grid(row=0, column=2, pady=10, padx=155, sticky='e')
 
         # Initial plot
-        f = Figure(figsize=(6, 4), dpi=100)
-        plot1 = f.add_subplot(111)
-        xvalues = np.arange(0, 12, 0.1)     #test values
-        yvalues = np.sin(xvalues)   #test values
-        plot1.plot(xvalues, yvalues, color='blue')
-        plot1.set_title('Default Graph')
-        canvas = FigureCanvasTkAgg(f, self)
+        self.f = Figure(figsize=(6, 4), dpi=100)
+        self.plot1 = self.f.add_subplot(111)
+        self.plot1.set_title('Default Graph')
+        canvas = FigureCanvasTkAgg(self.f, self)
         canvas.draw()
         canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, pady=20,
                                     sticky='w', padx=25)
@@ -98,10 +98,23 @@ class Spid_Displayer(tk.Tk):
 
     def get_file(self):
         file_path = filedialog.askopenfilename()
-        file_name = os.path.basename(file_path)
-        # print(file_name)
-        if file_path:
-            self._file_frame.config(text=f"File: {file_name}")  #setting message to display file name
+        if not file_path:
+            return
+        self.audio_handler = AudioHandler(file_path)
+        exported_path = self.audio_handler.export()
+        file_name = exported_path.split('/')[-1]
+
+        # Update file label & length
+        self._file_frame.config(text=f"File: {file_name}")
+        duration = self.audio_handler.sound.duration_seconds
+        self._file_length.config(text=f"File Length: {duration:.2f}s")
+        if self.spid_model is None:
+            from Sound_Model import Spid_Model
+            self.spid_model = Spid_Model(self)
+
+    def plot_waveform(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.waveform(self.audio_handler.export())
 
 #temporary test
 disp = Spid_Displayer()
