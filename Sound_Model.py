@@ -36,9 +36,25 @@ class Spid_Model:
         wfplot.plot(time, data)
         wfplot.set_title("Waveform")
         wfplot.set_xlabel("Time (s)")
-        wfplot.set_ylabel("Amplitude")
+        wfplot.set_ylabel("Amplitude (dB)", labelpad=5)
+        wfplot.tick_params(axis='y', labelsize=7)  #changing tick label size so that the y axis label fits
 
         # refresh canvas
         canvas = FigureCanvasTkAgg(f, self.displayer)
         canvas.draw()
+        #plt.tight_layout()
         canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, pady=20, sticky="w", padx=25)
+
+
+    def resonance_freq(self, file_path):
+        #find index of max amplitude
+        exported_file, samplerate, data = self.channel_set(file_path)
+        frequency, power = welch(data, samplerate, nperseg=4096)
+        #flat_pow = power.flatten()
+        index_max = np.matrix.argmax(power)
+        flat_freqs = frequency.flatten()
+        dominant_freq = frequency[index_max]
+        print(f'max power: {round(dominant_freq)}')
+        return dominant_freq
+
+#print(np.__version__)
