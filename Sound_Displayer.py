@@ -120,12 +120,14 @@ class Spid_Displayer(tk.Tk):
         self._file_frame.config(text=f"File: {file_name}")
         duration = self.audio_handler.sound.duration_seconds
         self._file_length.config(text=f"File Length: {duration:.2f}s")
-        dom_freq = self.spid_model.resonance_freq(exported_path)
-        #self._file_freq.config(text=f"Resonance Frequency: {dom_freq} Hz")
+
         #self.get_resonance_freq()
         if self.spid_model is None:
             from Sound_Model import Spid_Model
             self.spid_model = Spid_Model(self)
+            #updates resonance frequency label
+            dom_freq = self.spid_model.resonance_freq(exported_path)
+            self._file_freq.config(text=f"Resonance Frequency: {dom_freq} Hz")
 
     def plot_waveform(self):
         if self.audio_handler and self.spid_model:
@@ -133,13 +135,7 @@ class Spid_Displayer(tk.Tk):
 
     #SCRAPPED
 
-    '''
-    def get_resonance_freq(self):
-        if self.audio_handler and self.spid_model:
-            dom_freq = self.spid_model.resonance_freq(self.audio_handler.export())
-            self._file_freq.config(text=f"Resonance Frequency: {dom_freq} Hz")
-    
-    '''
+
 
 
 disp = Spid_Displayer()

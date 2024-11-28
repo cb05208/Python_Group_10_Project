@@ -27,3 +27,5 @@ class AudioHandler:
         output_path = path.join(output_dir, self.file_name + ".wav")
         self.sound.export(output_path, format="wav")
         return output_path
+
+#audio = AudioHandler(AudioHandler.audio_file_holder_path() + "\\" + "ProjectClap.wav")

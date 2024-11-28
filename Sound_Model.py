@@ -50,10 +50,10 @@ class Spid_Model:
         #find index of max amplitude
         exported_file, samplerate, data = self.channel_set(file_path)
         frequency, power = welch(data, samplerate, nperseg=4096)
-        #flat_pow = power.flatten()
-        index_max = np.matrix.argmax(power)
+        flat_pow = power.flatten()
+        index_max = np.argmax(flat_pow)
         flat_freqs = frequency.flatten()
-        dominant_freq = frequency[index_max]
+        dominant_freq = frequency[index_max]    #PROBLEM WITH NDARRAY
         print(f'max power: {round(dominant_freq)}')
         return dominant_freq
 
