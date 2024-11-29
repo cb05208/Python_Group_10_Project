@@ -58,4 +58,4 @@ class Spid_Model:
         print(f'max power: {round(dominant_freq)}')
         return dominant_freq
 
-#print(np.__version__)
+#print(np.__version__)testt
