@@ -8,6 +8,7 @@ from pydub import AudioSegment
 from Audio_Handler import AudioHandler
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from scipy.io import wavfile
+import ffmpeg
 
 class Spid_Model:
     #function for converting to .wav
@@ -17,7 +18,7 @@ class Spid_Model:
     # changes 2-channel to 1-channel
     def channel_set(self, file_path):
         audio_handler = AudioHandler(file_path)
-        exported_file = audio_handler.export()
+        exported_file = audio_handler.export_sound_as_wav()
         samplerate, data = wavfile.read(exported_file)
         if len(data.shape) > 1:
             data = data[:, 0]

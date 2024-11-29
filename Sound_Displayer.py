@@ -113,12 +113,13 @@ class Spid_Displayer(tk.Tk):
         if not file_path:
             return
         self.audio_handler = AudioHandler(file_path)
-        exported_path = self.audio_handler.export()
+        #exported_path = self.audio_handler.export()
+        exported_path = self.audio_handler.export_sound_as_wav()
         file_name = exported_path.split('/')[-1]
 
         # Update file label & length
         self._file_frame.config(text=f"File: {file_name}")
-        duration = self.audio_handler.sound.duration_seconds
+        duration = self.audio_handler._sound.duration_seconds
         self._file_length.config(text=f"File Length: {duration:.2f}s")
 
         #self.get_resonance_freq()
@@ -131,11 +132,8 @@ class Spid_Displayer(tk.Tk):
 
     def plot_waveform(self):
         if self.audio_handler and self.spid_model:
-            self.spid_model.waveform(self.audio_handler.export())
-
-    #SCRAPPED
+            self.spid_model.waveform(self.audio_handler.export_sound_as_wav())
 
 
-
-
+#test, delete later
 disp = Spid_Displayer()
