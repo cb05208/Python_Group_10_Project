@@ -15,7 +15,7 @@ class Spid_Model:
     def __init__(self, displayer):
         self.displayer = displayer
 
-    # changes 2-channel to 1-channel
+    # changes from 2-channel to 1-channel
     def channel_set(self, file_path):
         audio_handler = AudioHandler(file_path)
         exported_file = audio_handler.export_sound_as_wav()
@@ -23,6 +23,7 @@ class Spid_Model:
         if len(data.shape) > 1:
             data = data[:, 0]
         return exported_file, samplerate, data
+
 
     # waveform graph
     def waveform(self, file_path):
@@ -50,7 +51,7 @@ class Spid_Model:
     def resonance_freq(self, file_path):
         #find index of max amplitude
         exported_file, samplerate, data = self.channel_set(file_path)
-        frequency, power = welch(data, samplerate, nperseg=4096)
+        frequency, power = welch(data, samplerate, nperseg=4096)    #appropriate segmenting??
         flat_pow = power.flatten()
         index_max = np.argmax(flat_pow)
         flat_freqs = frequency.flatten()
@@ -58,4 +59,9 @@ class Spid_Model:
         print(f'max power: {round(dominant_freq)}')
         return dominant_freq
 
-#print(np.__version__)testt
+
+    def rt60_difference(self, file_path):
+        '''
+        :param file_path:
+        :return: rt 60 difference in seconds, the difference between .5 seconds and the avg in time for the rt60 values
+        '''

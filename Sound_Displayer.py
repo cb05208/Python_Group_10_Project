@@ -14,13 +14,14 @@ class Spid_Displayer(tk.Tk):
         self.title("Interactive Data Acoustic Modeling")
         self.geometry("725x700")
         self.config(pady=10)
-        self.minsize(725,700)
+        #self.minsize(725,700)
 
         self.audio_handler = None
         self.spid_model = None
         self.create_buttons()
 
-        self.mainloop()
+        #self.mainloop()
+
 
     def create_buttons(self):
         from Sound_Model import Spid_Model
@@ -100,14 +101,6 @@ class Spid_Displayer(tk.Tk):
         self.combPlots_btn.grid(row=3,column=2,pady=10)
 
 
-        #creating scrollbar
-        #CHECK, DO LATER DOESNT WORK NOW, NEED TO ADD BUTTONS TO A SECOND FRAME ON TOP OF MAIN FRAME FOR SCROLL TO WORK
-        #scroll_bar = ttk.Scrollbar(tk.Tk, orient=VERTICAL, command=canvas.get_tk_widget().yview)
-        #scroll_bar.pack(side=RIGHT, fill=Y)
-        #configuring canvas
-        #canvas.get_tk_widget().configure(yscrollcommand=scroll_bar.set)
-        #canvas.get_tk_widget().bind('<Configure>', lambda e: canvas.get_tk_widget().configure(scrollreigion=canvas.get_tk_widget().bbox("all")))
-
     def get_file(self):
         file_path = filedialog.askopenfilename()
         if not file_path:
@@ -122,7 +115,6 @@ class Spid_Displayer(tk.Tk):
         duration = self.audio_handler._sound.duration_seconds
         self._file_length.config(text=f"File Length: {duration:.2f}s")
 
-        #self.get_resonance_freq()
         if self.spid_model is None:
             from Sound_Model import Spid_Model
             self.spid_model = Spid_Model(self)
@@ -130,10 +122,11 @@ class Spid_Displayer(tk.Tk):
             dom_freq = self.spid_model.resonance_freq(exported_path)
             self._file_freq.config(text=f"Resonance Frequency: {dom_freq} Hz")
 
+
     def plot_waveform(self):
         if self.audio_handler and self.spid_model:
             self.spid_model.waveform(self.audio_handler.export_sound_as_wav())
 
 
 #test, delete later
-disp = Spid_Displayer()
+#disp = Spid_Displayer()
