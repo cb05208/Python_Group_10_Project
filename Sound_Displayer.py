@@ -14,7 +14,6 @@ class Spid_Displayer(tk.Tk):
         self.title("Interactive Data Acoustic Modeling")
         self.geometry("725x700")
         self.config(pady=10)
-        #self.minsize(725,700)
 
         self.audio_handler = None
         self.spid_model = None
@@ -107,7 +106,7 @@ class Spid_Displayer(tk.Tk):
         self.combPlots_btn = ttk.Button(
             self, text="Combine Plots",style="TButton", command=self.plot_all, padding="8 8 8 8")
         # self.combPlots_btn.grid(row=3,column=2,pady=10)
-        #ADD COMMAND
+
 
     def get_file(self):
         file_path = filedialog.askopenfilename()
@@ -161,7 +160,7 @@ class Spid_Displayer(tk.Tk):
 
     def plot_all(self):
         if self.audio_handler and self.spid_model:
-            self.spid_model.frequency(self.audio_handler.export(), 0)
+            self.spid_model.combine_frequency(self.audio_handler.export())
 
 
 
