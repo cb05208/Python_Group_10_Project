@@ -12,6 +12,3 @@ class Spid_Controller():
         #super().__init__()
         self.sound_model = sound_model
         self.sound_display = sound_display
-
-        #view = sDisplay(self)
-        #view.grid(row=0, column=0, padx=10, pady=10)

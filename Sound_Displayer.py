@@ -5,7 +5,6 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from tkinter import filedialog
-
 from Audio_Handler import AudioHandler
 
 # Set up main window
@@ -15,7 +14,7 @@ class Spid_Displayer(tk.Tk):
         self.title("Interactive Data Acoustic Modeling")
         self.geometry("725x700")
         self.config(pady=10)
-        self.minsize(725,700)
+        #self.minsize(725,700)
 
         self.audio_handler = None
         self.spid_model = None
