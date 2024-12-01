@@ -4,6 +4,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 #from pydub import effects
 from scipy.io import wavfile
 from scipy.signal import welch
+import scipy as sp
 from Audio_Handler import AudioHandler
 import matplotlib.pyplot as plt
 import ffmpeg
@@ -14,6 +15,7 @@ class Spid_Model:
     def __init__(self,displayer):
         self.displayer = displayer
         self.data_in_db = -1
+
     # changes 2-channel to 1-channel
     def channel_set(self, file_path):
         audio_handler = AudioHandler(file_path)
@@ -22,6 +24,7 @@ class Spid_Model:
         if data.ndim > 1:
             data = data[:,0]
         return exported_file, samplerate, data
+
     # waveform graph
     def waveform(self, file_path):
         exported_file, samplerate, data = self.channel_set(file_path)
@@ -42,6 +45,24 @@ class Spid_Model:
         canvas = FigureCanvasTkAgg(f,self.displayer)
         canvas.draw()
         canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, pady=20,sticky="w",padx=25)
+
+    def plot_spectrogram(self, file_path):
+        #creates a spectrogram showing how frequency varies with time
+        exported_file, samplerate, data = self.channel_set(file_path)
+        frequency, time, spectgram = sp.signal.spectrogram(data, samplerate)
+        f = self.displayer.f
+        f.clear()
+        spplot = f.add_subplot(111)
+        spplot.pcolormesh(time, frequency, np.log(spectgram))
+        spplot.set_title("Spectrogram")
+        spplot.set_xlabel("Time (s)")
+        spplot.set_ylabel("Frequency (Hz)")
+        spplot.tick_params(axis='y', labelsize=7)
+
+        canvas = FigureCanvasTkAgg(f, self.displayer)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1, column=0, columnspan=4, pady=20, sticky="w", padx=25)
+
 
     def resonance_freq(self, file_path):
         #find index of max amplitude
@@ -143,49 +164,49 @@ class Spid_Model:
         print(f'The RT60 reverb time is {round(abs(rt60),2)} seconds')
         return abs(rt60)
 
-    def combine_frequency(self, file_path):
+    def combine_frequency(self, file_path, target_low, target_med, target_high):
         f = self.displayer.f
         f.clear()
-        mfplot = f.add_subplot(111)
+        cfplot = f.add_subplot(111)
 
-        low_spectrum, low_freqs, t = self.reverb(file_path, 200)
+        low_spectrum, low_freqs, t = self.reverb(file_path, target_low)
         low_data = self.data_in_db
 
         # MEDIUM
-        med_spectrum, med_freqs, t = self.reverb(file_path, 1000)
+        med_spectrum, med_freqs, t = self.reverb(file_path, target_med)
         med_data = self.data_in_db
 
         # HIGH
-        high_spectrum, high_freqs, t = self.reverb(file_path, 6000)
+        high_spectrum, high_freqs, t = self.reverb(file_path, target_high)
         high_data = self.data_in_db
 
-        mfplot.plot(t, low_data, linewidth=1, alpha=0.7, color='#004bc6')
-        mfplot.plot(t, med_data, linewidth=1, alpha=0.7, color='purple')
-        mfplot.plot(t, high_data, linewidth=1, alpha=0.7, color='red')
+        cfplot.plot(t, low_data, linewidth=1, alpha=0.7, color='#004bc6')
+        cfplot.plot(t, med_data, linewidth=1, alpha=0.7, color='purple')
+        cfplot.plot(t, high_data, linewidth=1, alpha=0.7, color='red')
 
         index_of_max_low, index_of_max_less_5_low, index_of_max_less_25_low = self.find_max(low_data)
-        mfplot.plot(t[index_of_max_low], low_data[index_of_max_low], 'go')
-        mfplot.plot(t[index_of_max_less_5_low], low_data[index_of_max_less_5_low], 'yo')
-        mfplot.plot(t[index_of_max_less_25_low], low_data[index_of_max_less_25_low], 'ro')
+        cfplot.plot(t[index_of_max_low], low_data[index_of_max_low], 'go')
+        cfplot.plot(t[index_of_max_less_5_low], low_data[index_of_max_less_5_low], 'yo')
+        cfplot.plot(t[index_of_max_less_25_low], low_data[index_of_max_less_25_low], 'ro')
 
         index_of_max_high, index_of_max_less_5_high, index_of_max_less_25_high = self.find_max(high_data)
-        mfplot.plot(t[index_of_max_high], high_data[index_of_max_high], 'go')
-        mfplot.plot(t[index_of_max_less_5_high], high_data[index_of_max_less_5_high], 'yo')
-        mfplot.plot(t[index_of_max_less_25_high], high_data[index_of_max_less_25_high], 'ro')
+        cfplot.plot(t[index_of_max_high], high_data[index_of_max_high], 'go')
+        cfplot.plot(t[index_of_max_less_5_high], high_data[index_of_max_less_5_high], 'yo')
+        cfplot.plot(t[index_of_max_less_25_high], high_data[index_of_max_less_25_high], 'ro')
 
         # finding maxes for mid
         index_of_max_mid, index_of_max_less_5_mid, index_of_max_less_25_mid = self.find_max(med_data)
-        mfplot.plot(t[index_of_max_mid], med_data[index_of_max_mid], 'go')
-        mfplot.plot(t[index_of_max_less_5_mid], med_data[index_of_max_less_5_mid], 'yo')
-        mfplot.plot(t[index_of_max_less_25_mid], med_data[index_of_max_less_25_mid], 'ro')
+        cfplot.plot(t[index_of_max_mid], med_data[index_of_max_mid], 'go')
+        cfplot.plot(t[index_of_max_less_5_mid], med_data[index_of_max_less_5_mid], 'yo')
+        cfplot.plot(t[index_of_max_less_25_mid], med_data[index_of_max_less_25_mid], 'ro')
 
-        mfplot.legend(["Low RT60", "Medium RT60", "High RT60"], loc="lower right")
+        cfplot.legend(["Low RT60", "Medium RT60", "High RT60"], loc="lower right")
 
-        mfplot.set_xlabel("Time (s)")
-        mfplot.set_ylabel("Power (dB)")
+        cfplot.set_xlabel("Time (s)")
+        cfplot.set_ylabel("Power (dB)")
 
-        mfplot.set_title("Combined RT60 Graph")
-        mfplot.plot(t, self.data_in_db, linewidth=1, alpha=0.7, color='purple')
+        cfplot.set_title("Combined RT60 Graph")
+        cfplot.plot(t, self.data_in_db, linewidth=1, alpha=0.7, color='purple')
 
         canvas = FigureCanvasTkAgg(f, self.displayer)
         canvas.draw()

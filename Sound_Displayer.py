@@ -79,7 +79,7 @@ class Spid_Displayer(tk.Tk):
 
         # Special plot button
         self.special_btn = ttk.Button(
-            self, text="Special",style="TButton",padding="8 8 8 8")
+            self, text="Spectrogram",style="TButton", command=self.plot_spec,padding="8 8 8 8")
         # self.special_btn.grid(row=3,column=2,pady=10,sticky="w")
 
         # RT plot dropdown
@@ -145,6 +145,10 @@ class Spid_Displayer(tk.Tk):
         if self.audio_handler and self.spid_model:
             self.spid_model.waveform(self.audio_handler.export())
 
+    def plot_spec(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.plot_spectrogram(self.audio_handler.export())
+
     def plot_low(self):
         if self.audio_handler and self.spid_model:
             self.spid_model.frequency(self.audio_handler.export(), 200)
@@ -160,7 +164,7 @@ class Spid_Displayer(tk.Tk):
 
     def plot_all(self):
         if self.audio_handler and self.spid_model:
-            self.spid_model.combine_frequency(self.audio_handler.export())
+            self.spid_model.combine_frequency(self.audio_handler.export(), 200, 1000, 6000)
 
 
 
