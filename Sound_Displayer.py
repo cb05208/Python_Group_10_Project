@@ -5,23 +5,23 @@ from tkinter import ttk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from tkinter import filedialog
+
 from Audio_Handler import AudioHandler
 
-# Set up main windoww
+# Set up main window
 class Spid_Displayer(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Interactive Data Acoustic Modeling")
         self.geometry("725x700")
         self.config(pady=10)
-        #self.minsize(725,700)
+        self.minsize(725,700)
 
         self.audio_handler = None
         self.spid_model = None
         self.create_buttons()
 
         #self.mainloop()
-
 
     def create_buttons(self):
         from Sound_Model import Spid_Model
@@ -43,7 +43,7 @@ class Spid_Displayer(tk.Tk):
 
         # Analyze file button
         self._analyze_btn = ttk.Button(
-            self, text="Analyze File",style="TButton",padding="10 10 10 10")
+            self, text="Analyze File",style="TButton",command=self.analyze,padding="10 10 10 10")
         self._analyze_btn.grid(row=0,column=2,pady=10,padx=155, sticky='e')
 
         # Initial plot
@@ -52,8 +52,6 @@ class Spid_Displayer(tk.Tk):
         self.plot1.set_title('Default Graph')
         canvas = FigureCanvasTkAgg(self.f, self)
         canvas.draw()
-        #CHECK
-        #canvas.get_tk_widget().pack(expand = 1)
         canvas.get_tk_widget().grid(row=1,column=0,columnspan=4,pady=20,
                                     sticky='w', padx=25)
 
@@ -79,54 +77,94 @@ class Spid_Displayer(tk.Tk):
         # Waveform plot button
         self._waveform_btn = ttk.Button(
             self, text="Waveform",style="TButton",command=self.plot_waveform,padding="8 8 8 8")
-        self._waveform_btn.grid(row=2,column=2,pady=10,sticky="w")
+        # self._waveform_btn.grid(row=2,column=2,pady=10,sticky="w")
 
         # Special plot button
         self.special_btn = ttk.Button(
             self, text="Special",style="TButton",padding="8 8 8 8")
-        self.special_btn.grid(row=3,column=2,pady=10,sticky="w")
+        # self.special_btn.grid(row=3,column=2,pady=10,sticky="w")
 
         # RT plot dropdown
-        options = [" Low", " Medium", " High"]
-        rt_in = StringVar()
-        rt_in.set("RT Plots")
-        rt_combobox = ttk.Combobox(self, state="readonly", values=options,
+        options = {
+            "Low": self.plot_low,
+            "Medium":self.plot_mid,
+            "High":self.plot_high,}
+        self.rt_in = StringVar()
+        self.rt_in.set("RT Plots")
+        self.rt_combobox = ttk.Combobox(self, state="readonly", values=list(options.keys()),
                         width=11,font=('Arial',12))
-        rt_combobox.set("     RT Plots")
-        rt_combobox.grid(row=2,column=2,pady=10,ipady=7)
+        self.rt_combobox.set("     RT Plots")
+        # self.rt_combobox.grid(row=2,column=2,pady=10,ipady=7)
+        def on_select(event):
+            selected_option = self.rt_combobox.get()
+            command = options[selected_option]
+            if command:
+                command()
+            return
+        #bind selection to event
+        self.rt_combobox.bind("<<ComboboxSelected>>", on_select)
 
         # Combine plots button
         self.combPlots_btn = ttk.Button(
-            self, text="Combine Plots",style="TButton",padding="8 8 8 8")
-        self.combPlots_btn.grid(row=3,column=2,pady=10)
-
+            self, text="Combine Plots",style="TButton", command=self.plot_all, padding="8 8 8 8")
+        # self.combPlots_btn.grid(row=3,column=2,pady=10)
+        #ADD COMMAND
 
     def get_file(self):
         file_path = filedialog.askopenfilename()
         if not file_path:
             return
         self.audio_handler = AudioHandler(file_path)
-        #exported_path = self.audio_handler.export()
-        exported_path = self.audio_handler.export_sound_as_wav()
+        exported_path = self.audio_handler.export()
         file_name = exported_path.split('/')[-1]
-
-        # Update file label & length
         self._file_frame.config(text=f"File: {file_name}")
-        duration = self.audio_handler._sound.duration_seconds
-        self._file_length.config(text=f"File Length: {duration:.2f}s")
-
         if self.spid_model is None:
             from Sound_Model import Spid_Model
             self.spid_model = Spid_Model(self)
-            #updates resonance frequency label
-            dom_freq = self.spid_model.resonance_freq(exported_path)
-            self._file_freq.config(text=f"Resonance Frequency: {dom_freq} Hz")
 
+    def analyze(self):
+        # Update file label & length
+        # filepath = self.file_path
+        # self.audio_handler = AudioHandler(self.file_path)
+        duration = self.audio_handler.sound.duration_seconds
+        self._file_length.config(text=f"File Length: {duration:.2f}s")
+        if self.spid_model is None:
+            from Sound_Model import Spid_Model
+            self.spid_model = Spid_Model(self)
+        #updates resonance frequency label
+        exported_path = self.audio_handler.export()
+        dom_freq = self.spid_model.resonance_freq(exported_path)
+        self._file_freq.config(text=f"Resonance Frequency: {dom_freq:.2f} Hz")
+        #updates rt60 diff label
+        rt = self.spid_model.frequency(self.audio_handler.export(), 200)
+        self._file_rtDiff.config(text=f"RT60 Difference: {rt:.2f} s")
+        self._waveform_btn.grid(row=2, column=2, pady=10, sticky="w")
+        self.special_btn.grid(row=3, column=2, pady=10, sticky="w")
+        self.rt_combobox.grid(row=2,column=2,pady=10,ipady=7)
+        self.combPlots_btn.grid(row=3, column=2, pady=10)
 
     def plot_waveform(self):
         if self.audio_handler and self.spid_model:
-            self.spid_model.waveform(self.audio_handler.export_sound_as_wav())
+            self.spid_model.waveform(self.audio_handler.export())
+
+    def plot_low(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.frequency(self.audio_handler.export(), 200)
+
+    def plot_mid(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.frequency(self.audio_handler.export(), 1000)
+
+    def plot_high(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.frequency(self.audio_handler.export(), 6000)
 
 
-#test, delete later
+    def plot_all(self):
+        if self.audio_handler and self.spid_model:
+            self.spid_model.frequency(self.audio_handler.export(), 0)
+
+
+
+
 #disp = Spid_Displayer()
