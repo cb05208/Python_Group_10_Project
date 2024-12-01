@@ -134,7 +134,13 @@ class Spid_Displayer(tk.Tk):
         dom_freq = self.spid_model.resonance_freq(exported_path)
         self._file_freq.config(text=f"Resonance Frequency: {dom_freq:.2f} Hz")
         #updates rt60 diff label
-        rt = self.spid_model.frequency(self.audio_handler.export(), 200)
+        rt_low = self.spid_model.frequency(self.audio_handler.export(), 200)
+        rt_med = self.spid_model.frequency(self.audio_handler.export(), 1000)
+        rt_high = self.spid_model.frequency(self.audio_handler.export(), 6000)
+        rt_avg = ((rt_low + rt_med + rt_high) / 3)
+        print(f'Average RT60 time: {rt_avg}')
+        rt = rt_avg - 0.5
+        print(f'RT60 difference from 0.5: {rt}')
         self._file_rtDiff.config(text=f"RT60 Difference: {rt:.2f} s")
         self._waveform_btn.grid(row=2, column=2, pady=10, sticky="w")
         self.special_btn.grid(row=3, column=2, pady=10, sticky="w")

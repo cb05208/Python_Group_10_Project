@@ -1,12 +1,12 @@
 # Python_Group_10_Project
-Project Description and Purpose:
+## Project Description and Purpose:
 
 The goal of this project was to create an application using the Model View Controller 
 design scheme to organize the flow of information throughout the program. This application allows users to 
 upload sound files to an application 
 that then cleans up the data, analyzes the data, and then displays the data as visual output through different graphs. 
 
-Usage Instructions: 
+## Usage Instructions: 
 
 To run this application, the Sound_main.py file needs to be run from an IDE with
  the necessary packages pip installed as specified in the requirements.txt file. 
