@@ -16,4 +16,5 @@ pressed and the file length, resonance frequency, and RT60 Difference labels are
 The user can then press any of the plot selection buttons in order to display different graphs in the center of the window. 
 The RT Plots drop down menu can be used to choose between Low, Medium, and High RT60 Plots.
 
+***Disclaimer:***
 ***This application is intended for larger monitors, the RT60 Difference label may be cut of if it is run on a laptop. This problem can be avoided by hiding the taskbar.***

@@ -7,7 +7,7 @@ from matplotlib.figure import Figure
 from tkinter import filedialog
 from Audio_Handler import AudioHandler
 
-# Set up main window
+# Set up main windoww
 class Spid_Displayer(tk.Tk):
     def __init__(self):
         super().__init__()
