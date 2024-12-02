@@ -1,0 +1,30 @@
+- Updated README.md
+- Added spectrogram for special plot
+- Cleaned up combine plots code
+- Added requirements.txt
+- Added combine plots functionality
+- Organized according to MVC, run Sound main file
+- Updated audio handling
+- Updated audio handling
+- Added code from Conner and Jessica, added resonance frequency functionality and cleaned up minor GUI issues
+- Successfully cleaned up minor GUI issues, unsuccessfully added resonance frequency option
+- Added code from Jessica and Conner
+- Turned display into a class, added function for displaying file name
+- Creates classes for model, view, and control
+- Merge pull request #1 from cb05208/Test_Conner
+- Merge branch 'main' into Test_Conner
+- Added base project modules, removed redundant module
+- Added sine function for sine
+- Cleared repository
+- Cleared repository
+- Cleared repository
+- added jessica.py
+- Merge remote-tracking branch 'origin/main'
+- added jessica.py
+- Merge remote-tracking branch 'origin/main'
+- Rename Conner.py to connerpush.py
+- Added main.py
+- Added main.py
+- Added main.py
+- Test
+- Initial commit
